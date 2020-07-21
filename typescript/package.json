@@ -1,0 +1,22 @@
+{
+  "name": "typescript-training",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Simpfc/trainings.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Simpfc/trainings/issues"
+  },
+  "homepage": "https://github.com/Simpfc/trainings#readme",
+  "devDependencies": {
+    "typescript": "^3.9.7"
+  }
+}
