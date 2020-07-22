@@ -1,0 +1,9 @@
+mongo:
+  image: mongo:latest
+  volumes:
+    - /data/db/mongo
+
+redis:
+  image: redis
+  volumes:
+    - /data/db/redis
