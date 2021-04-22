@@ -2,37 +2,23 @@ version: '3.9'
 services:
   jenkins:
     image: jenkins/jenkins:lts
-#    privileged: true
-#    user: root
     volumes:
-#      - ~/jenkins:/var/jenkins_home
-#      - /var/run/docker.sock:/var/run/docker.sock
-#      - /usr/local/bin/docker:/usr/local/bin/docker
       - ./data/jenkins:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
-#    environment:
-#      JENKINS_HOST_HOME: "/data/jenkins"
     ports:
       - "8086:8080"
-      - "5000:5000"
-      - "50000:50000"
 
   portainer:
     image: portainer/portainer
     command: -H unix:///var/run/docker.sock
     restart: always
-#    environment:
-#      - VIRTUAL_HOST=portainer.yourdomain.com
-#      - VIRTUAL_PORT=9000
     ports:
       - 9007:9000
-      - 8007:8000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
 
   mysql:
-#    container_name: mysql57
     image: mysql:5.7
     restart: always
     command: --max_allowed_packet=32505856 --sql_mode=""
@@ -41,8 +27,6 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root_password
       - MYSQL_DATABASE=database
-#    networks:
-#      - backend
 
   phpmyadmin:
     depends_on:
@@ -56,18 +40,14 @@ services:
       MYSQL_USERNAME: root
       MYSQL_ROOT_PASSWORD: root_password
 
-#  registry:
-#    restart: always
-#    image: registry:latest
-#    ports:
-#      - 5000:5000
-#    volumes:
-#      - ./config/default/config.yml:/etc/docker/registry/config.yml:ro
-#      - ./data:/var/lib/registry:rw
-#    #environment:
-#    #- "STANDALONE=true"
-#    #- "MIRROR_SOURCE=https://registry-1.docker.io"
-#    #- "MIRROR_SOURCE_INDEX=https://index.docker.io"
+  registry:
+    restart: always
+    image: registry:latest
+    ports:
+      - 5001:5000
+    volumes:
+      - ./configs/registry/config.yml:/etc/docker/registry/config.yml:ro
+      - ./data/registry:/var/lib/registry:rw
 
   gitserver:
     image: gitea/gitea:1.14.1
@@ -93,31 +73,14 @@ services:
       - gitdb
 
   gitdb:
+    env_file:
+      - ./env/gitdb.env
     image: mysql:5.7
     restart: always
-    environment:
-      - MYSQL_ROOT_PASSWORD=gitea
-      - MYSQL_USER=gitea
-      - MYSQL_PASSWORD=gitea
-      - MYSQL_DATABASE=gitea
     networks:
       - gitea
     volumes:
       - ./mysql:/var/lib/mysql
-
-  phpmyadmin-gitdb:
-    depends_on:
-      - gitdb
-    image: phpmyadmin/phpmyadmin
-    restart: always
-    networks:
-      - gitea
-    ports:
-      - '8009:80'
-    environment:
-      PMA_HOST: gitdb
-      MYSQL_USERNAME: gitea
-      MYSQL_ROOT_PASSWORD: gitea
 
 networks:
   backend:
